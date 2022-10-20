@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "web-static-ip"
+spec:
+  defaultBackend:
+    service:
+      name: web
+      port:
+        number: 8080
+# [END gke_load_balancing_basic_ingress_static_ingress_basic_ingress]
+---
