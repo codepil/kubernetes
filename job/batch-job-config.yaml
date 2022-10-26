@@ -1,0 +1,26 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  # Unique key of the Job instance
+  name: example-job
+spec:
+  template:
+    metadata:
+      name: example-job
+    spec:
+      containers:
+      - name: pi
+        image: perl
+        command: ["perl"]
+        args: ["-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      # Do not restart containers after they exit
+      restartPolicy: Never
+  # only incase of parallel jobs, this specifies that there should be eight successful completions
+  completions: 8
+  # here should be five concurrent Pods running
+  parallelism: 5
+  # of retries before marking as failed.
+  backoffLimit: 4
+  # amount of time, in seconds, to complete its tasks successfully before terminating
+  activeDeadlineSeconds: 100

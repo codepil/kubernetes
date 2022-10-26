@@ -1,0 +1,28 @@
+# In contrast to preemptible VMs, which expire after 24 hours, Spot VMs have no expiration time.
+# Spot VMs are only terminated when Compute Engine needs the resources elsewhere.
+# On clusters running GKE version 1.20 and later, the kubelet graceful node shutdown feature is enabled.
+# The kubelet notices the termination notice and gracefully terminates Pods that are running on the node & schedular create new nodes.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: workload
+spec:
+  parallelism: 1
+  template:
+    metadata:
+      name: workload
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-spot: "true"
+      containers:
+      - name: workload
+        image: "us-docker.pkg.dev/google-samples/containers/gke/batch-ml-workload"
+        volumeMounts:
+        - mountPath: /mnt/fileserver
+          name: workload-pvc
+      volumes:
+      - name: workload-pvc
+        persistentVolumeClaim:
+          claimName: fileserver-claim
+          readOnly: false
+      restartPolicy: OnFailure
